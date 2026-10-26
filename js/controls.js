@@ -75,11 +75,11 @@ export class Controls {
   update() {
     const k = this.keys;
     let kx = (k.has('d') || k.has('arrowright') ? 1 : 0) - (k.has('a') || k.has('arrowleft') ? 1 : 0);
-    // flight-stick convention: pull back (S / ArrowDown) = climb
-    let ky = (k.has('s') || k.has('arrowdown') ? 1 : 0) - (k.has('w') || k.has('arrowup') ? 1 : 0);
+    // default: push up (W / ArrowUp / drag up) = climb
+    let ky = (k.has('w') || k.has('arrowup') ? 1 : 0) - (k.has('s') || k.has('arrowdown') ? 1 : 0);
     const usingKeys = kx !== 0 || ky !== 0;
     let x = usingKeys ? kx : this.touch.x;
-    let y = usingKeys ? ky : this.touch.y;
+    let y = usingKeys ? ky : -this.touch.y;
     if (this.invertY) y = -y;
     this.input.x = x;
     this.input.y = y;

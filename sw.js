@@ -1,5 +1,5 @@
 // Skyward service worker — cache-first, offline play.
-const CACHE = 'skyward-v1.0.0';
+const CACHE = 'skyward-v1.1.0';
 
 const ASSETS = [
   './',

@@ -19,7 +19,7 @@ export class Player {
     this.group = new THREE.Group();
     this.group.rotation.order = 'YXZ';
 
-    const mat = new THREE.MeshStandardMaterial({ color: SKINS[0].color, flatShading: true, roughness: 0.55 });
+    const mat = new THREE.MeshStandardMaterial({ color: SKINS[0].color, flatShading: true, roughness: 0.45 });
     const dark = new THREE.MeshStandardMaterial({ color: 0x1c2430, flatShading: true, roughness: 0.7 });
 
     const body = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.5, 3.4), mat);

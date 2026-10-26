@@ -68,19 +68,19 @@ export function moisture(x, z) {
 }
 
 // ---------- biome coloring ----------
-const C_SAND = [0.78, 0.72, 0.52];
-const C_ROCK = [0.46, 0.44, 0.43];
-const C_SNOW = [0.93, 0.95, 0.98];
-const C_GRASS_DRY = [0.60, 0.60, 0.33];
-const C_GRASS = [0.27, 0.55, 0.30];
-const C_DESERT = [0.82, 0.68, 0.42];
+const C_SAND = [0.85, 0.77, 0.55];
+const C_ROCK = [0.50, 0.46, 0.44];
+const C_SNOW = [0.97, 0.98, 1.0];
+const C_GRASS_DRY = [0.64, 0.61, 0.32];
+const C_GRASS = [0.22, 0.58, 0.28];
+const C_DESERT = [0.88, 0.73, 0.45];
 
 function biomeColor(x, z, h, slope, out) {
   const m = moisture(x, z);
   let r, g, b;
   if (h < WATER_Y + 3) {                     // beaches & sea floor
     r = C_SAND[0]; g = C_SAND[1]; b = C_SAND[2];
-    if (h < WATER_Y - 6) { r *= 0.55; g *= 0.65; b *= 0.75; } // deeper = darker
+    if (h < WATER_Y - 6) { r *= 0.45; g *= 0.62; b *= 0.72; } // deeper = teal depth
   } else if (h > 72 || (h > 58 && slope > 0.55)) {   // snow caps
     r = C_SNOW[0]; g = C_SNOW[1]; b = C_SNOW[2];
   } else if (slope > 0.75) {                 // cliffs
@@ -176,11 +176,55 @@ export class Water {
     const geo = new THREE.PlaneGeometry(CHUNK_SIZE * (VIEW_RADIUS + 1) * 2.4, CHUNK_SIZE * (VIEW_RADIUS + 1) * 2.4);
     geo.rotateX(-Math.PI / 2);
     this.mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
-      color: 0x1d5a8a, transparent: true, opacity: 0.82, roughness: 0.3, metalness: 0.3
+      color: 0x2e7fb8, transparent: true, opacity: 0.78, roughness: 0.35, metalness: 0.25
     }));
     scene.add(this.mesh);
   }
   update(t, px, pz) {
     this.mesh.position.set(px, WATER_Y + Math.sin(t * 0.5) * 0.35, pz);
+  }
+}
+
+// puffy low-poly clouds, streamed per chunk like terrain
+export class Clouds {
+  constructor(scene) {
+    this.scene = scene;
+    this.groups = new Map();
+    this.mat = new THREE.MeshStandardMaterial({
+      color: 0xf4f8ff, flatShading: true, roughness: 1,
+      transparent: true, opacity: 0.88
+    });
+    this.geo = new THREE.DodecahedronGeometry(1, 0);
+  }
+
+  update(px, pz) {
+    const R = 3;
+    const ccx = Math.floor(px / CHUNK_SIZE), ccz = Math.floor(pz / CHUNK_SIZE);
+    for (const [k, g] of this.groups) {
+      const [cx, cz] = k.split(',').map(Number);
+      if (Math.max(Math.abs(cx - ccx), Math.abs(cz - ccz)) > R + 1) {
+        this.scene.remove(g);
+        this.groups.delete(k);
+      }
+    }
+    for (let dz = -R; dz <= R; dz++) {
+      for (let dx = -R; dx <= R; dx++) {
+        const cx = ccx + dx, cz = ccz + dz, k = cx + ',' + cz;
+        if (this.groups.has(k)) continue;
+        const rng = chunkRng(cx, cz, 0xc10d);
+        const g = new THREE.Group();
+        const n = rng() < 0.75 ? 1 : 2;
+        for (let i = 0; i < n; i++) {
+          const m = new THREE.Mesh(this.geo, this.mat);
+          m.position.set((rng() - 0.5) * CHUNK_SIZE * 0.9, 130 + rng() * 90, (rng() - 0.5) * CHUNK_SIZE * 0.9);
+          m.scale.set(18 + rng() * 22, 7 + rng() * 6, 14 + rng() * 16);
+          m.rotation.y = rng() * Math.PI;
+          g.add(m);
+        }
+        g.position.set(cx * CHUNK_SIZE, 0, cz * CHUNK_SIZE);
+        this.scene.add(g);
+        this.groups.set(k, g);
+      }
+    }
   }
 }

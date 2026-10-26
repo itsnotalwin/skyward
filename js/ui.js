@@ -21,10 +21,11 @@ export class UI {
     // callbacks wired by main
     this.onStart = null; this.onPause = null; this.onResume = null;
     this.onRespawn = null; this.onQuit = null; this.onSkin = null;
-    this.onSound = null; this.onInvert = null;
+    this.onSound = null; this.onInvert = null; this.onPhoto = null;
 
     this.el.play.addEventListener('click', () => this.onStart && this.onStart());
     $('btn-pause').addEventListener('click', () => this.onPause && this.onPause());
+    $('btn-photo').addEventListener('click', () => this.onPhoto && this.onPhoto());
     $('btn-resume').addEventListener('click', () => this.onResume && this.onResume());
     $('btn-respawn').addEventListener('click', () => this.onRespawn && this.onRespawn());
     $('btn-p-quit').addEventListener('click', () => this.onQuit && this.onQuit());
