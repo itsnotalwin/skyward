@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Skyward — Flight Exploration</title>
+<meta name="description" content="Fly an endless procedural low-poly world. Discover landmarks, collect orbs, unlock gliders. Works offline.">
+<meta name="theme-color" content="#0b1d3a">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Skyward">
+<link rel="stylesheet" href="./css/style.css">
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.min.js" } }
+</script>
+</head>
+<body>
+<canvas id="scene"></canvas>
+
+<!-- ============ HUD ============ -->
+<div id="hud" class="hidden">
+  <div id="stats" class="panel">
+    <div class="stat"><b id="speed">0</b><small>km/h</small></div>
+    <div class="stat"><b id="alt">0</b><small>alt&nbsp;m</small></div>
+    <div class="stat"><b id="dist">0.0</b><small>flown&nbsp;km</small></div>
+  </div>
+  <div id="topright">
+    <div id="orbcount" class="panel">✦ <b id="orbs">0</b></div>
+    <button id="btn-pause" class="iconbtn" aria-label="Pause">⏸</button>
+  </div>
+  <canvas id="minimap" width="132" height="132" aria-label="Minimap"></canvas>
+</div>
+
+<div id="toasts" aria-live="polite"></div>
+<div id="vignette"></div>
+
+<!-- virtual joystick -->
+<div id="stick" class="hidden"><div id="stick-nub"></div></div>
+
+<!-- ============ Main menu ============ -->
+<div id="menu">
+  <div id="menu-inner">
+    <h1>SKYWARD</h1>
+    <p class="tag">an endless flight</p>
+    <button id="btn-play" class="primary">Take&nbsp;Flight</button>
+    <div class="menrow">
+      <button id="btn-journal">📖 Journal</button>
+      <button id="btn-settings">⚙️ Settings</button>
+    </div>
+    <div class="menrow">
+      <button id="btn-install" class="hidden">📲 Install</button>
+      <button id="btn-fullscreen">⛶ Fullscreen</button>
+    </div>
+    <p id="menu-stats" class="dim"></p>
+    <p class="dim tiny">Drag left side to steer · hold right side to boost</p>
+  </div>
+</div>
+
+<!-- ============ Pause ============ -->
+<div id="pause" class="modal hidden">
+  <div class="modal-card">
+    <h2>Paused</h2>
+    <button id="btn-resume" class="primary">Resume</button>
+    <button id="btn-respawn">↺ Respawn at start</button>
+    <button id="btn-p-journal">📖 Journal</button>
+    <button id="btn-p-settings">⚙️ Settings</button>
+    <button id="btn-p-quit">🏁 Back to menu</button>
+  </div>
+</div>
+
+<!-- ============ Journal ============ -->
+<div id="journal" class="modal hidden">
+  <div class="modal-card tall">
+    <h2>Journal</h2>
+    <div id="journal-progress" class="dim"></div>
+    <div id="journal-list"></div>
+    <button id="btn-j-close" class="primary">Close</button>
+  </div>
+</div>
+
+<!-- ============ Settings ============ -->
+<div id="settings" class="modal hidden">
+  <div class="modal-card tall">
+    <h2>Settings</h2>
+    <label class="setting"><span>Sound</span><input type="checkbox" id="set-sound"></label>
+    <label class="setting"><span>Invert pitch (drag up = climb)</span><input type="checkbox" id="set-invert"></label>
+    <div class="setting"><span>Glider</span></div>
+    <div id="skins"></div>
+    <button id="btn-reset" class="danger">Reset all progress</button>
+    <button id="btn-s-close" class="primary">Close</button>
+  </div>
+</div>
+
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>
